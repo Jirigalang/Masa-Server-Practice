@@ -1,0 +1,97 @@
+﻿@page "/"
+@inject MasaBlazor MasaBlazor
+@inject BlogService BlogService
+@inject IJSRuntime JS
+@inject HttpClient Http
+<PageTitle>中国兔兔</PageTitle>
+<MApp>
+    <MMain>
+        <MCard>
+            <MTabs BackgroundColor="red accent-4" FixedTabs Dark>
+            </MTabs>
+        </MCard>
+        <MContainer Fluid>
+            <MTextarea Filled
+                       Label="输入朗读文本(只支持日语)"
+                       AutoGrow
+                       @bind-Value="_value"
+                       maxlength="100">
+            </MTextarea>
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <MButton Depressed Color="primary" @onclick="GenerateAudio">
+                    生成
+                </MButton>
+            </div>
+            <div style="width: 300px; margin: 0 auto;">
+                @if (isLoading)
+                {
+                    <div class="loading-indicator">
+                        正在生成音频，请稍候...
+                        <MProgressCircular Indeterminate
+                                           Size="47"
+                                           Width="5" />
+                    </div>
+                }
+                else
+                {
+                    <div style="width: 300px; margin: 0 auto;">
+                        @if (!string.IsNullOrEmpty(BlogService.AudioUrl))
+                        {
+                            <audio controls>
+                                <source src="@BlogService.AudioUrl" type="audio/wav" />
+                                您的浏览器不支持音频播放。
+                            </audio>
+                        }
+                    </div>
+                }
+            </div>
+            <img src="https://voicevox.hiroshiba.jp/static/f4b17adf517d6c41a8e613fe64b961ca/a28a5/portrait-chugoku_usagi.webp" width="500" height="500" alt="中国兔兔" class="background-image" />
+        </MContainer>
+        <MContainer Fluid>
+        </MContainer>
+    </MMain>
+    <MFooter>
+        <a href="https://beian.miit.gov.cn/" target="_blank" style="display:block; margin-left:auto; color:black;font-size:16px; text-decoration: none;">蒙ICP备2024018457号-1</a>
+    </MFooter>
+</MApp>
+
+@code {
+    private string _value = "にはお、謝謝、ショーロンポー、ざいじぇん";
+    private bool isLoading = false; // 加载状态
+
+    private async Task GenerateAudio()
+    {
+        isLoading = true; // 开始加载
+        StateHasChanged(); // 更新 UI
+
+        try
+        {
+            // 生成音频
+            await BlogService.GenerateAudio(_value);
+        }
+        finally
+        {
+            isLoading = false; // 完成加载
+            StateHasChanged(); // 更新 UI
+        }
+    }
+
+    private class SpeakerInfo
+    {
+        public string? Portrait { get; set; }
+    }
+}
+
+<style>
+    .background-image {
+        background-size: cover;
+        margin-right: -100px;
+        float: right;
+    }
+
+    .loading-indicator {
+        text-align: center;
+        font-size: 1.2em;
+        color: #555;
+    }
+</style>

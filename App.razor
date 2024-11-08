@@ -1,0 +1,23 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class="centered-message">
+                <p role="alert">你想干什么,这里没有你想要的东西</p>
+            </div>
+        </LayoutView>
+    </NotFound>
+</Router>
+<style>
+.centered-message {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center;     /* 垂直居中 */
+    height: 100vh;          /* 高度设置为视口高度 */
+    text-align: center;      /* 文本居中对齐 */
+}
+</style>
