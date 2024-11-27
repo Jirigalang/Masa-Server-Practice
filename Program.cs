@@ -1,6 +1,8 @@
+using BlazorDownloadFile;
 using Masa.Blazor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MS.wyyyy;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -8,6 +10,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddMasaBlazor();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://api.jirigalang.com") });
 builder.Services.AddHttpClient<BlogService>();
+builder.Services.AddHttpClient<WyySongList>();
+builder.Services.AddBlazorDownloadFile(ServiceLifetime.Scoped);
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -17,7 +21,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 

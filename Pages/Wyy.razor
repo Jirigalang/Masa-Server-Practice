@@ -1,0 +1,50 @@
+﻿@page "/songlist"
+@inject MasaBlazor MasaBlazor
+@inject wyyyy.WyySongList wy
+@inject IJSRuntime JS
+@using BlazorDownloadFile
+@inject IBlazorDownloadFileService BlazorDownloadFileService
+<PageTitle>扒歌单</PageTitle>
+<MContainer Fluid>
+    <MTextarea Filled
+    Label="复制你的歌单链接进来"
+    AutoGrow
+    @bind-Value="_value"
+    maxlength="100">
+    </MTextarea>
+    <MButton Depressed Color="primary" @onclick="GenerateSongList">
+        @wy.buttonContent
+    </MButton>
+</MContainer>
+@code {
+    private string _value = "https://music.163.com/#/playlist?id=526625206";
+    bool isLoading = false;
+    private async Task GenerateSongList()
+    {
+        isLoading = true; 
+
+        try
+        {
+            await wy.GetSongList(_value);
+            // 确保 songlist 内容有效，调用 JS 进行下载
+            if (wy.isSucceed)
+            {
+                byte[] fileContent = System.Text.Encoding.UTF8.GetBytes(wy.songlist);
+                // 将 byte[] 转换为 Base64 字符串（如果需要）
+                string base64Content = Convert.ToBase64String(fileContent);
+
+                // 下载文件
+                await BlazorDownloadFileService.DownloadFile("songlist.csv", base64Content, "text/plain");
+            }
+            else
+            {
+                Console.WriteLine("没有获取到有效的歌曲列表内容！");
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
+
